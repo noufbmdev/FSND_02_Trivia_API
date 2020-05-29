@@ -1,0 +1,23 @@
+Searches for a question.
+curl http://127.0.0.1:5000/questions -X POST -H "Content-Type: application/json" -d '{"search_term":"world"}'
+
+Updates a question's category by ID.
+curl http://127.0.0.1:5000/questions/1 -X PATCH -H "Content-Type: application/json" -d '{"category":"2"}'
+
+Adds new question.
+curl http://127.0.0.1:5000/questions -X POST -H "Content-Type: application/json" -d '{"question":"test", "answer":"test", "difficulty":"4", "category":"1"}'
+
+Gets all categories.
+curl http://127.0.0.1:5000/categories
+
+Gets all questions and categories.
+curl http://127.0.0.1:5000/questions?page=1
+
+Deletes a question by ID.
+curl http://127.0.0.1:5000/questions/6
+
+Gets all questions by category.
+curl http://127.0.0.1:5000/categories/1/questions
+
+Gets a random question.
+curl http://127.0.0.1:5000/trivia -X POST -H "Content-Type: application/json" -d '{"category": 0, "previous_questions": [1]}'
