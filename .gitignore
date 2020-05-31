@@ -4,6 +4,7 @@ env
 
 # OS generated files #
 ######################
+node_modules
 .DS_Store
 .DS_Store?
 ._*
