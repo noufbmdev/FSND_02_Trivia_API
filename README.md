@@ -90,68 +90,54 @@ Authenticaton: Does not require authentication.
 - Example: `curl http://127.0.0.1:5000/categories`
 ```
 {
-  "categories": [
-    {
-      "id": 1,
-      "type": "Music"
-    },
-    {
-      "id": 2,
-      "type": "Science"
-    },
-    {
-      "id": 3,
-      "type": "Computer"
-    },
-    {
-      "id": 4,
-      "type": "Movies"
-    },
-    {
-      "id": 5,
-      "type": "Books"
-    }
-  ],
+  "categories": {
+    "1": "Science",
+    "2": "Art",
+    "3": "Geography",
+    "4": "History",
+    "5": "Entertainment",
+    "6": "Sports"
+  },
   "success": true
 }
 ```
 ##### GET '/categories/<int:category_id>/questions'
 - General:
-    - Returns the current category type.
+    - Returns the current category's ID.
     - Lists all questions in a category.
     - Questions are paginated (10 questions per page).
-    - Returns the total number of questions.
+    - Returns the total number of questions in that category.
 - Request Body: None.
 - Request Parameters: None.
 - Example: `curl http://127.0.0.1:5000/categories/1/questions`
 ```
 {
-  "current_category": "Music",
+  "current_category": 1,
   "questions": [
     {
       "answer": "The Liver",
-      "category": "1",
+      "category": 1,
       "difficulty": 4,
       "id": 20,
       "question": "What is the heaviest organ in the human body?"
     },
     {
       "answer": "Alexander Fleming",
-      "category": "1",
+      "category": 1,
       "difficulty": 3,
       "id": 21,
       "question": "Who discovered penicillin?"
     },
     {
       "answer": "Blood",
-      "category": "1",
+      "category": 1,
       "difficulty": 4,
       "id": 22,
       "question": "Hematology is a branch of medicine involving the study of what?"
     }
   ],
   "success": true,
-  "total_questions": 19
+  "total_questions": 3
 }
 ```
 ##### GET '/questions'
@@ -165,95 +151,81 @@ Authenticaton: Does not require authentication.
 - Example: `curl http://127.0.0.1:5000/questions?page=1`
 ```
 {
-  "categories": [
-    {
-      "id": 1,
-      "type": "Music"
-    },
-    {
-      "id": 2,
-      "type": "Science"
-    },
-    {
-      "id": 3,
-      "type": "Computer"
-    },
-    {
-      "id": 4,
-      "type": "Movies"
-    },
-    {
-      "id": 5,
-      "type": "Books"
-    }
-  ],
+  "categories": {
+    "1": "Science",
+    "2": "Art",
+    "3": "Geography",
+    "4": "History",
+    "5": "Entertainment",
+    "6": "Sports"
+  },
   "questions": [
     {
       "answer": "Maya Angelou",
-      "category": "4",
+      "category": 4,
       "difficulty": 2,
       "id": 5,
       "question": "Whose autobiography is entitled 'I Know Why the Caged Bird Sings'?"
     },
     {
       "answer": "Muhammad Ali",
-      "category": "4",
+      "category": 4,
       "difficulty": 1,
       "id": 9,
       "question": "What boxer's original name is Cassius Clay?"
     },
     {
       "answer": "Apollo 13",
-      "category": "5",
+      "category": 5,
       "difficulty": 4,
       "id": 2,
       "question": "What movie earned Tom Hanks his third straight Oscar nomination, in 1996?"
     },
     {
       "answer": "Tom Cruise",
-      "category": "5",
+      "category": 5,
       "difficulty": 4,
       "id": 4,
       "question": "What actor did author Anne Rice first denounce, then praise in the role of her beloved Lestat?"
     },
     {
       "answer": "Edward Scissorhands",
-      "category": "5",
+      "category": 5,
       "difficulty": 3,
       "id": 6,
       "question": "What was the title of the 1990 fantasy directed by Tim Burton about a young man with multi-bladed appendages?"
     },
     {
       "answer": "Brazil",
-      "category": "6",
+      "category": 6,
       "difficulty": 3,
       "id": 10,
       "question": "Which is the only team to play in every soccer World Cup tournament?"
     },
     {
       "answer": "Uruguay",
-      "category": "6",
+      "category": 6,
       "difficulty": 4,
       "id": 11,
       "question": "Which country won the first ever soccer World Cup in 1930?"
     },
     {
       "answer": "George Washington Carver",
-      "category": "4",
+      "category": 4,
       "difficulty": 2,
       "id": 12,
       "question": "Who invented Peanut Butter?"
     },
     {
       "answer": "Lake Victoria",
-      "category": "3",
+      "category": 3,
       "difficulty": 2,
       "id": 13,
       "question": "What is the largest lake in Africa?"
     },
     {
       "answer": "The Palace of Versailles",
-      "category": "3",
+      "category": 3,
       "difficulty": 3,
       "id": 14,
       "question": "In which royal palace would you find the Hall of Mirrors?"
@@ -267,107 +239,32 @@ Authenticaton: Does not require authentication.
 - General:
     - Adds a new question to the database.
     - Returns the newly created question's information.
-    - Lists all questions with their ID, question text, answer text, category ID, and difficulty rating.
-    - Questions are paginated (10 questions per page).
     - Returns the total number of questions.
 - Request Body:
-    - Question (String) - The question itself.
-    - Answer (String) - The question's answer.
-    - Difficulty (Integer) - The question's difficulty rating.
-    - Category (String) - The category ID that the question belongs to.
+    - `question` (String) - The question itself.
+    - `answer` (String) - The question's answer.
+    - `difficulty` (String) - The question's difficulty rating.
+        - On a scale of 1 to 5.
+    - `category` (String) - The category's ID that the question belongs to.
 - Request Parameters: None.
-- Example: `curl http://127.0.0.1:5000/questions -X POST -H "Content-Type: application/json" -d '{"question":"test", "answer":"test", "difficulty":"4", "category":"1"}'`
+- Example: `curl http://127.0.0.1:5000/questions -X POST -H "Content-Type: application/json" -d '{"question": "How many molecules of oxygen does ozone have?", "answer": "3", "difficulty": "2", "category": "1"}'`
 ```
 {
   "created_question": {
-    "answer": "test",
-    "category": "1",
-    "difficulty": 4,
+    "answer": "3",
+    "category": 1,
+    "difficulty": 2,
     "id": 24,
-    "question": "test"
+    "question": "How many molecules of oxygen does ozone have?"
   },
-  "questions": [
-    {
-      "answer": "Apollo 13",
-      "category": "5",
-      "difficulty": 4,
-      "id": 2,
-      "question": "What movie earned Tom Hanks his third straight Oscar nomination, in 1996?"
-    },
-    {
-      "answer": "Tom Cruise",
-      "category": "5",
-      "difficulty": 4,
-      "id": 4,
-      "question": "What actor did author Anne Rice first denounce, then praise in the role of her beloved Lestat?"
-    },
-    {
-      "answer": "Maya Angelou",
-      "category": "4",
-      "difficulty": 2,
-      "id": 5,
-      "question": "Whose autobiography is entitled 'I Know Why the Caged Bird Sings'?"
-    },
-    {
-      "answer": "Edward Scissorhands",
-      "category": "5",
-      "difficulty": 3,
-      "id": 6,
-      "question": "What was the title of the 1990 fantasy directed by Tim Burton about a young man with multi-bladed appendages?"
-    },
-    {
-      "answer": "Muhammad Ali",
-      "category": "4",
-      "difficulty": 1,
-      "id": 9,
-      "question": "What boxer's original name is Cassius Clay?"
-    },
-    {
-      "answer": "Brazil",
-      "category": "6",
-      "difficulty": 3,
-      "id": 10,
-      "question": "Which is the only team to play in every soccer World Cup tournament?"
-    },
-    {
-      "answer": "Uruguay",
-      "category": "6",
-      "difficulty": 4,
-      "id": 11,
-      "question": "Which country won the first ever soccer World Cup in 1930?"
-    },
-    {
-      "answer": "George Washington Carver",
-      "category": "4",
-      "difficulty": 2,
-      "id": 12,
-      "question": "Who invented Peanut Butter?"
-    },
-    {
-      "answer": "Lake Victoria",
-      "category": "3",
-      "difficulty": 2,
-      "id": 13,
-      "question": "What is the largest lake in Africa?"
-    },
-    {
-      "answer": "The Palace of Versailles",
-      "category": "3",
-      "difficulty": 3,
-      "id": 14,
-      "question": "In which royal palace would you find the Hall of Mirrors?"
-    }
-  ],
   "success": true,
-  "total_num_of_questions": 20
+  "total_num_of_questions": 19
 }
 ```
 ##### DELETE '/questions/<int:question_id>'
 - General:
     - Deletes a question from the database.
     - Returns the deleted question's information.
-    - Lists all questions with their ID, question text, answer text, category ID, and difficulty rating.
-    - Questions are paginated (10 questions per page).
     - Returns the total number of questions.
 - Request Body: None.
 - Request Parameters: None.
@@ -376,85 +273,13 @@ Authenticaton: Does not require authentication.
 {
   "deleted_question": {
     "answer": "Edward Scissorhands",
-    "category": "5",
+    "category": 5,
     "difficulty": 3,
     "id": 6,
     "question": "What was the title of the 1990 fantasy directed by Tim Burton about a young man with multi-bladed appendages?"
   },
-  "questions": [
-    {
-      "answer": "Apollo 13",
-      "category": "5",
-      "difficulty": 4,
-      "id": 2,
-      "question": "What movie earned Tom Hanks his third straight Oscar nomination, in 1996?"
-    },
-    {
-      "answer": "Tom Cruise",
-      "category": "5",
-      "difficulty": 4,
-      "id": 4,
-      "question": "What actor did author Anne Rice first denounce, then praise in the role of her beloved Lestat?"
-    },
-    {
-      "answer": "Maya Angelou",
-      "category": "4",
-      "difficulty": 2,
-      "id": 5,
-      "question": "Whose autobiography is entitled 'I Know Why the Caged Bird Sings'?"
-    },
-    {
-      "answer": "Muhammad Ali",
-      "category": "4",
-      "difficulty": 1,
-      "id": 9,
-      "question": "What boxer's original name is Cassius Clay?"
-    },
-    {
-      "answer": "Brazil",
-      "category": "6",
-      "difficulty": 3,
-      "id": 10,
-      "question": "Which is the only team to play in every soccer World Cup tournament?"
-    },
-    {
-      "answer": "Uruguay",
-      "category": "6",
-      "difficulty": 4,
-      "id": 11,
-      "question": "Which country won the first ever soccer World Cup in 1930?"
-    },
-    {
-      "answer": "George Washington Carver",
-      "category": "4",
-      "difficulty": 2,
-      "id": 12,
-      "question": "Who invented Peanut Butter?"
-    },
-    {
-      "answer": "Lake Victoria",
-      "category": "3",
-      "difficulty": 2,
-      "id": 13,
-      "question": "What is the largest lake in Africa?"
-    },
-    {
-      "answer": "The Palace of Versailles",
-      "category": "3",
-      "difficulty": 3,
-      "id": 14,
-      "question": "In which royal palace would you find the Hall of Mirrors?"
-    },
-    {
-      "answer": "Agra",
-      "category": "3",
-      "difficulty": 2,
-      "id": 15,
-      "question": "The Taj Mahal is located in which Indian city?"
-    }
-  ],
   "success": true,
-  "total_num_of_questions": 19
+  "total_num_of_questions": 18
 }
 ```
 ##### PATCH '/questions/<int:question_id>'
@@ -462,7 +287,7 @@ Authenticaton: Does not require authentication.
     - Updates a question's category ID.
     - Returns the updated question's ID.
 - Request Body:
-    - Category (String) - The category ID that is to be updated.
+    - `category` (String) - The category ID that is to be updated to.
 - Request Parameters: None.
 - Example: `curl http://127.0.0.1:5000/questions/10 -X PATCH -H "Content-Type: application/json" -d '{"category":"2"}'`
 ```
@@ -471,54 +296,55 @@ Authenticaton: Does not require authentication.
   "success": true
 }
 ```
-##### POST '/questions'
+##### POST '/questions/search'
 - General:
     - Searches the database for questions that includes a search term.
     - Returns the search result as a list of questions.
-    - Returns the total number of questions.
+    - Returns the total number of questions of the search result.
 - Request Body:
-    - Search Term (String) - The text that is to be used to search the database.
+    - `searchTerm` (String) - The text that is to be used to search the database.
 - Request Parameters: None.
-- Example: `curl http://127.0.0.1:5000/questions -X POST -H "Content-Type: application/json" -d '{"search_term":"world"}'`
+- Example: `curl http://127.0.0.1:5000/questions/search -X POST -H "Content-Type: application/json" -d '{"searchTerm":"world"}'`
 ```
 {
   "questions": [
     {
-      "answer": "Uruguay",
-      "category": "6",
-      "difficulty": 4,
-      "id": 11,
-      "question": "Which country won the first ever soccer World Cup in 1930?"
-    },
-    {
       "answer": "Brazil",
-      "category": "2",
+      "category": 6,
       "difficulty": 3,
       "id": 10,
       "question": "Which is the only team to play in every soccer World Cup tournament?"
+    },
+    {
+      "answer": "Uruguay",
+      "category": 6,
+      "difficulty": 4,
+      "id": 11,
+      "question": "Which country won the first ever soccer World Cup in 1930?"
     }
   ],
   "success": true,
-  "total_questions": 19
+  "total_questions": 2
 }
 ```
-##### POST '/trivia'
+##### POST '/quizzes'
 - General:
     - Retrieves a random question from the database by category.
     - Returns the random question's ID, question text, answer text, category ID, and difficulty rating.
 - Request Body:
-    - Category (Integer) - The category's ID that is to be used for the trivia game.
-    - Previous Questions (Integer) - A list of previously displayed questions.
+    - `quizCategory` (Dict) - The category's ID that is to be used for the trivia game. (0 means all categories)
+        - Formatted in the following manner: `{"id": category_id}`
+    - `previousQuestions` (List) - A list of previously displayed questions' IDs.
 - Request Parameters: None.
-- Example: `curl http://127.0.0.1:5000/trivia -X POST -H "Content-Type: application/json" -d '{"category": 0, "previous_questions": [1, 2, 3, 4]}'`
+- Example: `curl http://127.0.0.1:5000/quizzes -X POST -H "Content-Type: application/json" -d '{"quizCategory": {"id": 0}, "previousQuestions": [1, 2]}'`
 ```
 {
   "question": {
-    "answer": "Brazil",
-    "category": "2",
-    "difficulty": 3,
-    "id": 10,
-    "question": "Which is the only team to play in every soccer World Cup tournament?"
+    "answer": "Escher",
+    "category": 2,
+    "difficulty": 1,
+    "id": 16,
+    "question": "Which Dutch graphic artist–initials M C was a creator of optical illusions?"
   },
   "success": true
 }
