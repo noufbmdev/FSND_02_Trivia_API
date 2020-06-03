@@ -147,7 +147,8 @@ Authenticaton: Does not require authentication.
     - Questions are paginated (10 questions per page).
     - Returns the total number of questions.
 - Request Body: None.
-- Request Parameters: `page` - it is set to page 1 by default.
+- Request Parameters:
+    - `page` - it is set to page 1 by default.
 - Example: `curl http://127.0.0.1:5000/questions?page=1`
 ```
 {
