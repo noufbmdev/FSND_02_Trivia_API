@@ -38,13 +38,14 @@ class TriviaTestCase(unittest.TestCase):
         data = json.loads(response.data.decode())
 
         if num_of_categories > 0:
-            formatted_categories = [category.format() for category
-                                    in categories]
-            same_list = all(data["categories"][i] == formatted_categories[i]
-                            for i in range(0, num_of_categories))
+            formatted_categories = {category.id: category.type for category
+                                    in categories}
+            same_list = all([data["categories"][str(i)] ==
+                            formatted_categories[i]
+                            for i in range(1, num_of_categories)])
 
             self.assertEqual(response.status_code, 200)
-            self.assertTrue(isinstance(data["categories"], list))
+            self.assertTrue(isinstance(data["categories"], dict))
             self.assertTrue(same_list)
             self.assertEqual(len(data["categories"]), num_of_categories)
         else:
@@ -102,7 +103,7 @@ class TriviaTestCase(unittest.TestCase):
             self.assertTrue(isinstance(data["questions"], list))
             self.assertTrue(at_most_10_questions)
             self.assertEqual(data["total_questions"], total_num_of_questions)
-            self.assertTrue(isinstance(data["categories"], list))
+            self.assertTrue(isinstance(data["categories"], dict))
             self.assertEqual(len(data["categories"]), num_of_categories)
         else:
             self.assertEqual(response.status_code, 404)
@@ -157,7 +158,7 @@ class TriviaTestCase(unittest.TestCase):
         if (data["created_question"]["question"] == 'test'
            and data["created_question"]["answer"] == 'test'
            and data["created_question"]["difficulty"] == 4
-           and data["created_question"]["category"] == '2'):
+           and int(data["created_question"]["category"]) == 2):
             same_question = True
         else:
             same_question = False
@@ -166,7 +167,7 @@ class TriviaTestCase(unittest.TestCase):
         if (question.question == 'test'
            and question.answer == 'test'
            and question.difficulty == 4
-           and question.category == '2'):
+           and int(question.category) == 2):
             same_question = True
         else:
             same_question = False
@@ -179,9 +180,9 @@ class TriviaTestCase(unittest.TestCase):
 
     def test_search(self):
         search_term = "test"
-        response = self.client().post("/questions",
+        response = self.client().post("/questions/search",
                                       data=json.dumps(dict(
-                                        search_term=search_term)),
+                                        searchTerm=search_term)),
                                       content_type='application/json')
         data = json.loads(response.data.decode())
 
@@ -203,23 +204,26 @@ class TriviaTestCase(unittest.TestCase):
             self.assertEqual(data["message"], "Resource not found.")
 
     def test_get_category_questions_valid_id(self):
-        total_categories = str(Category.query.count())
+        category_id = str(Category.query.count())
 
         response = self.client().get("/categories/" +
-                                     total_categories + "/questions")
+                                     category_id + "/questions")
         data = json.loads(response.data.decode())
 
-        category = Category.query.get(total_categories)
+        category = Category.query.get(category_id)
 
-        all_questions_categories = all([data["questions"][question]["category"]
-                                        == str(category.id) for question in
-                                        data["questions"]])
+        total_num_of_questions = Question.query.filter_by(
+                                category=category_id).count()
+
+        all_questions_categories = all([int(
+            data["questions"][question]["category"]) ==
+            category.id for question in range(0, len(data["questions"]))])
 
         self.assertEqual(response.status_code, 200)
         self.assertTrue(data["success"])
         self.assertTrue(all_questions_categories)
-        self.assertEqual(data["total_questions"], Question.query.count())
-        self.assertEqual(data["current_category"], category.type)
+        self.assertEqual(data["total_questions"], total_num_of_questions)
+        self.assertEqual(data["current_category"], category.id)
 
     def test_get_category_questions_invalid_id(self):
         total_categories_plus_1 = str(Category.query.count() + 1)
@@ -233,16 +237,16 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(data["message"], "Resource not found.")
 
     def test_play_trivia(self):
-        response = self.client().post("/trivia",
+        response = self.client().post("/quizzes",
                                       data=json.dumps(dict(
-                                                      previous_questions=[2],
-                                                      category=2)),
+                                                      previousQuestions=[2],
+                                                      quizCategory={"id": 2})),
                                       content_type='application/json')
         data = json.loads(response.data.decode())
 
         self.assertTrue(response.status_code, 200)
         self.assertTrue(data["success"])
-        self.assertEqual(data["question"]["category"], "2")
+        self.assertEqual(int(data["question"]["category"]), 2)
         self.assertEqual(len(data["question"]), 5)
 
     def test_400_error(self):
